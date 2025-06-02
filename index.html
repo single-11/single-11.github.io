@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能时间胶囊</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-clock"></i> 智能时间胶囊</h1>
+            <p>珍藏你的记忆，在未来与自己相遇</p>
+            <nav>
+                <ul>
+                    <li><a href="#create" class="active"><i class="fas fa-plus"></i> 创建胶囊</a></li>
+                    <li><a href="#list"><i class="fas fa-list"></i> 我的胶囊</a></li>
+                    <li><a href="#stats"><i class="fas fa-chart-bar"></i> 统计数据</a></li>
+                    <li><a href="#games"><i class="fas fa-gamepad"></i> 小游戏</a></li>
+                </ul>
+            </nav>
+            <!-- 实时时钟容器 -->
+            <div class="real-time-clock" id="realTimeClock">
+                <span id="clockDisplay"></span> <!-- 显示日期和时间 -->
+                <svg class="clock" viewBox="0 0 100 100">
+                    <!-- 钟面 -->
+                    <circle class="clock-face" cx="50" cy="50" r="48"></circle>
+                    
+                    <!-- 刻度 (可选，这里简化不加) -->
+
+                    <!-- 中心圆点 -->
+                    <circle class="center-dot" cx="50" cy="50" r="4"></circle>
+
+                    <!-- 指针 -->
+                    <line class="hour-hand" x1="50" y1="50" x2="50" y2="30"></line>
+                    <line class="minute-hand" x1="50" y1="50" x2="50" y2="20"></line>
+                    <line class="second-hand" x1="50" y1="50" x2="50" y2="10"></line>
+                </svg>
+            </div>
+        </header>
+
+        <main>
+            <section id="create" class="create-capsule">
+                <h2><i class="fas fa-edit"></i> 创建新的时间胶囊</h2>
+                <form id="capsuleForm">
+                    <div class="form-group">
+                        <label for="title">标题：</label>
+                        <input type="text" id="title" placeholder="给你的记忆起个名字" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="category">类别：</label>
+                        <select id="category" required>
+                            <option value="memory">回忆</option>
+                            <option value="goal">目标</option>
+                            <option value="letter">信件</option>
+                            <option value="wish">愿望</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="content">内容：</label>
+                        <textarea id="content" placeholder="写下你想说的话..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="mood">心情：</label>
+                        <div class="mood-selector">
+                            <span class="mood-item" data-mood="happy">😊</span>
+                            <span class="mood-item" data-mood="sad">😢</span>
+                            <span class="mood-item" data-mood="excited">🎉</span>
+                            <span class="mood-item" data-mood="calm">😌</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="openDate">打开日期：</label>
+                        <input type="date" id="openDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="attachments">添加附件：</label>
+                        <input type="file" id="attachments" multiple>
+                    </div>
+                    <button type="submit" class="btn-primary"><i class="fas fa-save"></i> 保存时间胶囊</button>
+                </form>
+            </section>
+
+            <section id="list" class="capsule-list">
+                <h2><i class="fas fa-archive"></i> 我的时间胶囊</h2>
+                <div class="filters">
+                    <select id="filterCategory">
+                        <option value="all">所有类别</option>
+                        <option value="memory">回忆</option>
+                        <option value="goal">目标</option>
+                        <option value="letter">信件</option>
+                        <option value="wish">愿望</option>
+                    </select>
+                    <select id="filterStatus">
+                        <option value="all">所有状态</option>
+                        <option value="locked">未开启</option>
+                        <option value="unlocked">已开启</option>
+                    </select>
+                </div>
+                <div id="capsuleContainer"></div>
+            </section>
+
+            <section id="stats" class="statistics">
+                <h2><i class="fas fa-chart-pie"></i> 统计数据</h2>
+                <div class="stats-grid">
+                    <div class="chart-container">
+                        <h3>胶囊类型分布</h3>
+                        <div class="stats-numbers"></div>
+                    </div>
+                    <div class="chart-container">
+                        <h3>心情分布</h3>
+                        <div class="stats-numbers"></div>
+                    </div>
+                    <div class="chart-container">
+                        <h3>时间线</h3>
+                        <div class="stats-numbers"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="games" class="game-section">
+                <h2><i class="fas fa-gamepad"></i> 趣味小游戏</h2>
+                <p>在等待胶囊开启的时候，来玩个小游戏吧！</p>
+                <div class="game-container">
+                    <div class="game-card" onclick="startMemoryGame()">
+                        <h3><i class="fas fa-brain"></i> 记忆配对</h3>
+                        <p>考验记忆力的卡片配对游戏</p>
+                    </div>
+                    <div class="game-card" onclick="startSnakeGame()">
+                        <h3><i class="fas fa-snake"></i> 贪吃蛇</h3>
+                        <p>经典的贪吃蛇游戏</p>
+                    </div>
+                    <div class="game-card" onclick="startTetrisGame()">
+                        <h3><i class="fas fa-shapes"></i> 俄罗斯方块</h3>
+                        <p>经典的俄罗斯方块游戏</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 添加通知提示音 -->
+    <audio id="notificationSound" src="https://assets.mixkit.co/sfx/preview/mixkit-positive-notification-951.mp3"></audio>
+    
+    <!-- 固定在侧边的任务按钮 -->
+    <div class="fixed-task-button" id="fixedTaskButton">
+        <i class="fas fa-bars"></i> <!-- 汉堡图标 -->
+    </div>
+
+    <!-- 隐藏的任务选项容器 -->
+    <div class="task-options-container" id="taskOptionsContainer">
+        <div class="task-option-item" data-section="create">
+            <i class="fas fa-plus"></i> 创建胶囊
+        </div>
+        <div class="task-option-item" data-section="list">
+            <i class="fas fa-list"></i> 我的胶囊
+        </div>
+        <div class="task-option-item" data-section="stats">
+            <i class="fas fa-chart-bar"></i> 统计数据
+        </div>
+        <div class="task-option-item" data-section="games">
+            <i class="fas fa-gamepad"></i> 小游戏
+        </div>
+    </div>
+
+    <!-- 记忆配对游戏模态窗口 -->
+    <div class="modal-overlay" id="memoryGameModalOverlay">
+        <div class="modal-content">
+            <span class="close-button" id="closeGameModal">&times;</span>
+            <div class="game-container">
+                <h2>记忆配对</h2>
+                <div class="game-info">
+                    <div id="timer">时间: 0秒</div>
+                    <button id="restartButton" class="btn-primary">重新开始</button>
+                </div>
+                <div class="game-grid"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html> 
